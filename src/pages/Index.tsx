@@ -30,9 +30,9 @@ const Index = () => {
         
         <div className="relative z-10 text-center text-warm-white px-4 max-w-4xl mx-auto">
           <div className="animate-fade-slide-up">
-            <h1 className="font-playfair text-6xl md:text-8xl font-bold mb-6 leading-tight animate-glow">
+            <h1 className="font-playfair text-6xl md:text-8xl font-bold mb-6 leading-tight">
               The Fancy Candles
-              <span className="block text-gold font-light bg-gradient-luxury bg-clip-text text-transparent animate-shimmer">by Pallavi</span>
+              <span className="block text-gold font-light opacity-90">by Pallavi</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 font-light opacity-90 animate-fade-slide-up animation-delay-200">
               Handcrafted elegance for every occasion
@@ -42,7 +42,7 @@ const Index = () => {
                 variant="luxury" 
                 size="lg" 
                 onClick={() => scrollToSection('collections')}
-                className="text-lg px-12 py-4 rounded-full shadow-luxury hover:shadow-glow transform hover:scale-105 transition-all duration-500"
+                className="text-lg px-12 py-4 rounded-full hover-lift"
               >
                 Explore Our Collection
               </Button>
@@ -50,10 +50,10 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-4 h-4 bg-gold/30 rounded-full animate-float animation-delay-100"></div>
-        <div className="absolute bottom-20 right-20 w-6 h-6 bg-blush/20 rounded-full animate-float animation-delay-300"></div>
-        <div className="absolute top-1/3 right-10 w-3 h-3 bg-peach/25 rounded-full animate-float animation-delay-500"></div>
+        {/* Subtle Floating Elements */}
+        <div className="absolute top-20 left-10 w-3 h-3 bg-gold/20 rounded-full animate-float animation-delay-100"></div>
+        <div className="absolute bottom-20 right-20 w-4 h-4 bg-blush/15 rounded-full animate-float animation-delay-300"></div>
+        <div className="absolute top-1/3 right-10 w-2 h-2 bg-peach/20 rounded-full animate-float animation-delay-500"></div>
       </section>
 
       {/* Collections Section */}
