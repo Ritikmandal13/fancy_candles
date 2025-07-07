@@ -65,6 +65,8 @@ All colors in HSL for elegant, cozy, and premium aesthetic
     
     --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elastic: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-magnetic: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .dark {
@@ -113,5 +115,294 @@ All colors in HSL for elegant, cozy, and premium aesthetic
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Advanced Animation System */
+@layer utilities {
+  
+  /* Entrance Animations */
+  @keyframes fadeSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeSlideLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeSlideRight {
+    0% {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleUp {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      text-shadow: 0 0 5px hsl(var(--gold) / 0.3);
+    }
+    50% {
+      text-shadow: 0 0 20px hsl(var(--gold) / 0.6), 0 0 30px hsl(var(--gold) / 0.4);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 5px hsl(var(--gold) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px hsl(var(--gold) / 0.6), 0 0 30px hsl(var(--gold) / 0.4);
+    }
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes magnetic-hover {
+    0% {
+      transform: translate(0);
+    }
+    100% {
+      transform: translate(var(--mouse-x, 0), var(--mouse-y, 0));
+    }
+  }
+
+  /* Animation Classes */
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-slide-left {
+    animation: fadeSlideLeft 0.6s ease-out forwards;
+  }
+
+  .animate-fade-slide-right {
+    animation: fadeSlideRight 0.6s ease-out forwards;
+  }
+
+  .animate-scale-up {
+    animation: scaleUp 0.5s ease-out forwards;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out forwards;
+  }
+
+  .animate-rotate {
+    animation: rotate 20s linear infinite;
+  }
+
+  /* Stagger Animation Delays */
+  .animation-delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+
+  .animation-delay-700 {
+    animation-delay: 0.7s;
+  }
+
+  .animation-delay-800 {
+    animation-delay: 0.8s;
+  }
+
+  /* Interactive Hover Effects */
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px hsl(var(--charcoal) / 0.15);
+  }
+
+  .hover-magnetic {
+    transition: var(--transition-magnetic);
+    cursor: pointer;
+  }
+
+  .hover-magnetic:hover {
+    transform: scale(1.05);
+  }
+
+  .hover-glow {
+    transition: var(--transition-smooth);
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--gold) / 0.4);
+  }
+
+  .hover-tilt {
+    transition: var(--transition-elastic);
+  }
+
+  .hover-tilt:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+  }
+
+  /* Scroll Animation Triggers */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease-out;
+  }
+
+  .scroll-animate.animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Text Animations */
+  .text-shimmer {
+    background: linear-gradient(90deg, 
+      hsl(var(--charcoal)), 
+      hsl(var(--gold)), 
+      hsl(var(--charcoal))
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, 
+      hsl(var(--gold)), 
+      hsl(var(--gold-light))
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Particle Animation */
+  .floating-particles::before,
+  .floating-particles::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: hsl(var(--gold) / 0.6);
+    border-radius: 50%;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .floating-particles::before {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .floating-particles::after {
+    top: 80%;
+    right: 15%;
+    animation-delay: 2s;
   }
 }
