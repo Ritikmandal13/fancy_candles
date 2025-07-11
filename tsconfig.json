@@ -15,5 +15,9 @@
     "allowJs": true,
     "noUnusedLocals": false,
     "strictNullChecks": false
-  }
+  },
+  "include": [
+    "sanity.config.ts",
+    "schemaTypes/**/*.ts"
+  ]
 }
