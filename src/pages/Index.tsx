@@ -63,6 +63,7 @@ const Index = () => {
   const [about, setAbout] = useState<About | null>(null);
   const [social, setSocial] = useState<Social | null>(null);
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Contact form state
   const [contactName, setContactName] = useState("");
@@ -125,6 +126,21 @@ const Index = () => {
     }
   }, [selectedCollection, products]);
 
+  // Add close on Escape and lock scroll on mobile menu open
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    // Lock scroll
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -135,14 +151,82 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-premium font-inter overflow-hidden">
       {/* Sticky Top Bar */}
-      <header className="fixed top-0 left-0 w-full z-30 bg-black/70 backdrop-blur-md flex items-center justify-between px-4 py-3 shadow-md md:hidden border-b border-black/10">
-        <div className="bg-white rounded-full shadow-md flex items-center justify-center">
-          <img src={logo} alt="The Fancy Candle by Pallavi logo" className="h-14 w-auto object-contain" style={{ maxHeight: 56 }} />
+      <header className="fixed top-0 left-0 right-0 z-30 bg-white/40 backdrop-blur-xl flex items-center justify-between px-6 py-1 shadow-lg md:hidden border-b border-gold/20 rounded-b-2xl" style={{boxShadow: '0 4px 32px 0 rgba(212,175,55,0.08)'}}>
+        <div className="shadow-gold flex items-center justify-center" style={{boxShadow: '0 0 12px 2px rgba(212,175,55,0.12)'}}>
+          <img src={logo} alt="The Fancy Candle by Pallavi logo" className="h-16 w-auto object-contain drop-shadow-lg" style={{ maxHeight: 64, minWidth: 64, filter: 'drop-shadow(0 0 8px #e6c97a88)' }} />
         </div>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-gold">
-          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        {/* Hamburger/X Icon */}
+        <button
+          className="w-12 h-12 flex items-center justify-center text-gold focus:outline-none focus:ring-2 focus:ring-gold transition-all duration-200 hover:text-white hover:bg-gold/20 self-center"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu-drawer"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <span className="relative w-7 h-7 block">
+            <span
+              className={`absolute left-0 top-2 w-7 h-1 bg-gold rounded transition-transform transition-[top] duration-300 ease-in-out ${menuOpen ? 'rotate-45 top-4' : ''}`}
+            ></span>
+            <span
+              className={`absolute left-0 top-5 w-7 h-1 bg-gold rounded transition-all duration-200 ease-in-out ${menuOpen ? 'opacity-0' : ''}`}
+            ></span>
+            <span
+              className={`absolute left-0 top-8 w-7 h-1 bg-gold rounded transition-transform transition-[top] duration-300 ease-in-out ${menuOpen ? '-rotate-45 top-4' : ''}`}
+            ></span>
+          </span>
         </button>
+        {/* Gold gradient accent bar */}
+        <div className="absolute left-0 right-0 bottom-0 h-1 rounded-b-xl bg-gradient-to-r from-gold via-gold-light to-gold/60 opacity-80 pointer-events-none shadow-lg" style={{zIndex:2}} />
       </header>
+      {/* Mobile Drawer & Overlay */}
+      {menuOpen && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setMenuOpen(false)}
+            aria-hidden="true"
+          />
+          {/* Drawer */}
+          <nav
+            id="mobile-menu-drawer"
+            className={`fixed top-0 right-0 z-50 h-full w-4/5 max-w-xs bg-white/70 backdrop-blur-lg border-l border-white/30 shadow-2xl flex flex-col py-8 px-6 rounded-l-2xl transition-transform duration-300 ease-in-out ${menuOpen ? 'translate-x-0 animate-slide-in' : 'translate-x-full'}`}
+            role="dialog"
+            aria-modal="true"
+          >
+            <button
+              className="self-end mb-8 text-charcoal hover:text-gold focus:outline-none"
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+            >
+              <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="6" y1="6" x2="22" y2="22"/><line x1="6" y1="22" x2="22" y2="6"/></svg>
+            </button>
+            <ul className="flex flex-col gap-6 text-lg font-semibold text-charcoal mt-4">
+              <li><a href="#" className="py-3 px-2 rounded-lg transition-colors duration-200 hover:text-gold active:bg-gold/10" onClick={e => { e.preventDefault(); setMenuOpen(false); window.scrollTo({top: 0, behavior: 'smooth'}); }}>Home</a></li>
+              <li><a href="#collections" className="py-3 px-2 rounded-lg transition-colors duration-200 hover:text-gold active:bg-gold/10" onClick={e => { e.preventDefault(); setMenuOpen(false); document.getElementById('collections')?.scrollIntoView({behavior: 'smooth'}); }}>Collections</a></li>
+              <li><a href="#about" className="py-3 px-2 rounded-lg transition-colors duration-200 hover:text-gold active:bg-gold/10" onClick={e => { e.preventDefault(); setMenuOpen(false); document.getElementById('about')?.scrollIntoView({behavior: 'smooth'}); }}>About</a></li>
+              <li><a href="#testimonials" className="py-3 px-2 rounded-lg transition-colors duration-200 hover:text-gold active:bg-gold/10" onClick={e => { e.preventDefault(); setMenuOpen(false); document.getElementById('testimonials')?.scrollIntoView({behavior: 'smooth'}); }}>Testimonials</a></li>
+              <li><a href="#contact" className="py-3 px-2 rounded-lg transition-colors duration-200 hover:text-gold active:bg-gold/10" onClick={e => { e.preventDefault(); setMenuOpen(false); document.getElementById('contact')?.scrollIntoView({behavior: 'smooth'}); }}>Contact</a></li>
+            </ul>
+            <div className="mt-10 flex gap-6 justify-center">
+              <a href={social?.instagram || 'https://instagram.com/the_fancy_candles_by_pallavi'} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#f58529] via-[#dd2a7b] via-[#8134af] to-[#515bd4] text-white text-xl shadow-lg hover:scale-110 transition-transform duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-6 h-6 text-white">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3h9A4.5 4.5 0 0121 7.5v9A4.5 4.5 0 0116.5 21h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3zm9.75 2.25h.008v.008h-.008v-.008zM12 8.25A3.75 3.75 0 1112 15.75a3.75 3.75 0 010-7.5z" />
+                </svg>
+              </a>
+              <a href="https://wa.me/message/JVVEFSG6NLWVH1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500 text-white text-xl shadow-lg hover:scale-110 transition-transform duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6">
+                  <path d="M20.52 3.48A12.07 12.07 0 0012 0C5.37 0 0 5.37 0 12a11.93 11.93 0 001.67 6.13L0 24l6.25-1.64A12.09 12.09 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.23-3.48-8.52zM12 22a9.93 9.93 0 01-5.09-1.39l-.36-.21-3.71.98.99-3.62-.23-.37A9.94 9.94 0 1122 12c0 5.52-4.48 10-10 10zm5.2-7.8c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.41-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.97.95-.97 2.3 0 1.34.99 2.64 1.13 2.82.14.18 1.95 2.98 4.74 4.06.66.28 1.18.45 1.58.58.66.21 1.26.18 1.73.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" />
+                </svg>
+              </a>
+            </div>
+          </nav>
+          <style>{`
+            @keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+            .animate-slide-in { animation: slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+          `}</style>
+        </>
+      )}
 
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[420px] flex items-center justify-center overflow-hidden pt-16 md:pt-0">
@@ -185,52 +269,52 @@ const Index = () => {
 
       {/* Featured Products Section */}
       {featuredProducts.length > 0 && (
-        <section className="py-20 px-4 bg-gradient-premium relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-peach/10 via-transparent to-blush/10"></div>
-          <div className="absolute top-1/4 left-10 w-40 h-40 bg-gradient-luxury opacity-5 rounded-full blur-3xl animate-float animation-delay-200"></div>
-          <div className="absolute bottom-1/4 right-10 w-28 h-28 bg-gradient-shimmer opacity-8 rounded-full blur-2xl animate-float animation-delay-600"></div>
-          <div className="max-w-7xl mx-auto text-center relative z-10">
-            <div className="animate-fade-slide-up">
-              <h2 className="font-playfair text-5xl font-bold text-charcoal mb-4 animate-glow">
+      <section className="py-20 px-4 bg-gradient-premium relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-peach/10 via-transparent to-blush/10"></div>
+        <div className="absolute top-1/4 left-10 w-40 h-40 bg-gradient-luxury opacity-5 rounded-full blur-3xl animate-float animation-delay-200"></div>
+        <div className="absolute bottom-1/4 right-10 w-28 h-28 bg-gradient-shimmer opacity-8 rounded-full blur-2xl animate-float animation-delay-600"></div>
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="animate-fade-slide-up">
+            <h2 className="font-playfair text-5xl font-bold text-charcoal mb-4 animate-glow">
                 Featured Products
-              </h2>
-              <p className="text-xl text-charcoal opacity-80 mb-16 max-w-2xl mx-auto">
-                Our most loved handcrafted candles, each with its own unique charm and fragrance
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </h2>
+            <p className="text-xl text-charcoal opacity-80 mb-16 max-w-2xl mx-auto">
+              Our most loved handcrafted candles, each with its own unique charm and fragrance
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredProducts.map((candle, index) => (
-                <div key={candle._id} className="group">
-                  <Card className="bg-card/80 backdrop-blur-md shadow-premium hover:shadow-luxury transition-all duration-500 border-0 group overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-shimmer opacity-0 group-hover:opacity-15 transition-opacity duration-500"></div>
-                    <div className="aspect-square bg-gradient-to-br from-peach/20 via-blush/10 to-beige/20 flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-luxury opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
-                      {candle.image ? (
-                        <img
-                          src={urlFor(candle.image).width(400).height(400).url()}
-                          alt={candle.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="text-6xl opacity-60 group-hover:opacity-80 transition-all duration-500 transform group-hover:scale-110 animate-glow">🕯️</div>
-                      )}
-                    </div>
-                    <CardContent className="p-6 relative z-10">
-                      <h3 className="font-playfair text-xl font-semibold text-charcoal mb-2 group-hover:text-gold transition-colors duration-300">
-                        {candle.name}
-                      </h3>
-                      <p className="text-charcoal opacity-70 mb-3 group-hover:opacity-90 transition-opacity duration-300">
-                        {candle.description}
-                      </p>
-                      <p className="font-playfair text-2xl font-bold text-gold">
-                        {candle.price}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
+              <div key={candle._id} className="group">
+                <Card className="bg-card/80 backdrop-blur-md shadow-premium hover:shadow-luxury transition-all duration-500 border-0 group overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-shimmer opacity-0 group-hover:opacity-15 transition-opacity duration-500"></div>
+                  <div className="aspect-square bg-gradient-to-br from-peach/20 via-blush/10 to-beige/20 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-luxury opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+                    {candle.image ? (
+                      <img
+                        src={urlFor(candle.image).width(400).height(400).url()}
+                        alt={candle.name}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="text-6xl opacity-60 group-hover:opacity-80 transition-all duration-500 transform group-hover:scale-110 animate-glow">🕯️</div>
+                    )}
+                  </div>
+                  <CardContent className="p-6 relative z-10">
+                    <h3 className="font-playfair text-xl font-semibold text-charcoal mb-2 group-hover:text-gold transition-colors duration-300">
+                      {candle.name}
+                    </h3>
+                    <p className="text-charcoal opacity-70 mb-3 group-hover:opacity-90 transition-opacity duration-300">
+                      {candle.description}
+                    </p>
+                    <p className="font-playfair text-2xl font-bold text-gold">
+                      ₹{candle.price}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
           </div>
         </section>
       )}
@@ -363,7 +447,7 @@ const Index = () => {
                             {candle.description}
                           </p>
                           <p className="font-playfair text-xl sm:text-2xl font-bold text-gold">
-                            {candle.price}
+                            ₹{candle.price}
                           </p>
                         </CardContent>
                       </Card>
@@ -418,7 +502,7 @@ const Index = () => {
                   {modalProduct.name}
                 </h2>
                 <p className="font-playfair text-xl font-bold text-gold mb-2">
-                  {modalProduct.price}
+                  ₹{modalProduct.price}
                 </p>
                 <p className="text-base text-charcoal opacity-80 mb-2">
                   {modalProduct.description}
@@ -430,12 +514,12 @@ const Index = () => {
       </section>
 
       {/* About Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-warm-white via-ivory to-warm-white relative overflow-hidden">
+      <section id="about" className="py-16 px-4 bg-gradient-to-r from-warm-white via-ivory to-warm-white relative overflow-hidden">
         <div className="absolute top-1/4 right-1/4 w-48 h-48 bg-gradient-luxury opacity-3 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-1/4 left-1/4 w-36 h-36 bg-gradient-shimmer opacity-5 rounded-full blur-2xl animate-float animation-delay-400"></div>
         <div className="max-w-2xl mx-auto flex flex-col items-center text-center relative z-10">
           {/* Brand image */}
-          {about?.image && (
+            {about?.image && (
             <div className="w-full flex justify-center mb-6">
               <img
                 src={urlFor(about.image).width(600).url()}
@@ -460,7 +544,7 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section - swipeable carousel for mobile */}
-      <section className="py-16 px-4 bg-gradient-to-b from-warm-white via-ivory to-warm-white relative overflow-hidden">
+      <section id="testimonials" className="py-16 px-4 bg-gradient-to-b from-warm-white via-ivory to-warm-white relative overflow-hidden">
         <div className="absolute top-1/3 left-10 w-44 h-44 bg-gradient-luxury opacity-3 rounded-full blur-3xl animate-float animation-delay-200"></div>
         <div className="absolute bottom-1/3 right-10 w-32 h-32 bg-gradient-shimmer opacity-5 rounded-full blur-2xl animate-float animation-delay-600"></div>
         <div className="max-w-6xl mx-auto text-center relative z-10">
@@ -543,7 +627,7 @@ const Index = () => {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 px-4 bg-gradient-premium relative overflow-hidden">
+      <section id="contact" className="py-16 px-4 bg-gradient-premium relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-peach/10 via-transparent to-blush/10"></div>
         <div className="absolute top-1/4 left-1/5 w-52 h-52 bg-gradient-luxury opacity-5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-1/4 right-1/5 w-36 h-36 bg-gradient-shimmer opacity-8 rounded-full blur-2xl animate-float animation-delay-400"></div>
@@ -640,12 +724,12 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-shimmer opacity-5 animate-shimmer"></div>
         <div className="max-w-md mx-auto relative z-10 flex flex-col items-center gap-5">
           <div className="flex gap-6 justify-center mb-2">
-            <a href={social?.instagram || 'https://instagram.com/the_fancy_candles_by_pallavi'} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-gold to-gold-light text-white text-2xl shadow-lg hover:scale-110 transition-transform duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+            <a href={social?.instagram || 'https://instagram.com/the_fancy_candles_by_pallavi'} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-[#f58529] via-[#dd2a7b] via-[#8134af] to-[#515bd4] text-white text-2xl shadow-lg hover:scale-110 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-7 h-7 text-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3h9A4.5 4.5 0 0121 7.5v9A4.5 4.5 0 0116.5 21h-9A4.5 4.5 0 013 16.5v-9A4.5 4.5 0 017.5 3zm9.75 2.25h.008v.008h-.008v-.008zM12 8.25A3.75 3.75 0 1112 15.75a3.75 3.75 0 010-7.5z" />
               </svg>
             </a>
-            <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 flex items-center justify-center rounded-full bg-green-500 text-white text-2xl shadow-lg hover:scale-110 transition-transform duration-200">
+            <a href="https://wa.me/message/JVVEFSG6NLWVH1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 flex items-center justify-center rounded-full bg-green-500 text-white text-2xl shadow-lg hover:scale-110 transition-transform duration-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-7 h-7">
                 <path d="M20.52 3.48A12.07 12.07 0 0012 0C5.37 0 0 5.37 0 12a11.93 11.93 0 001.67 6.13L0 24l6.25-1.64A12.09 12.09 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.23-3.48-8.52zM12 22a9.93 9.93 0 01-5.09-1.39l-.36-.21-3.71.98.99-3.62-.23-.37A9.94 9.94 0 1122 12c0 5.52-4.48 10-10 10zm5.2-7.8c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.41-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.97.95-.97 2.3 0 1.34.99 2.64 1.13 2.82.14.18 1.95 2.98 4.74 4.06.66.28 1.18.45 1.58.58.66.21 1.26.18 1.73.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" />
               </svg>
