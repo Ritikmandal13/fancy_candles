@@ -6,6 +6,10 @@ A modern, mobile-first product showcase website for handcrafted candles.
 - React (Vite)
 - Tailwind CSS
 - Sanity.io (Headless CMS)
+<<<<<<< HEAD
+=======
+- Cloudinary (for images)
+>>>>>>> ea02851 (chore: push entire codebase after domain and UI updates)
 
 ## Features
 - Mobile-first, modern, aesthetic design
